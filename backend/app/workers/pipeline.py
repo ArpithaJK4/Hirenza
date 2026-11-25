@@ -53,10 +53,16 @@ def run_pipeline(db: Session, trigger: str = "schedule", force: bool = False,
     a = run_agent(db, "alerts", send_job_alerts, trigger)
     if d.status in ("success", "partial"):
         notify_failing_sources(db, d.stats.get("failing_sources", []))
+    from app.agents.application.auto_apply import run_auto_apply
     from app.agents.outreach.service import refresh_signals
     from app.agents.tracking.service import prune, send_reminders
+    from app.core.config import get_settings
+    if get_settings().auto_apply_enabled and trigger in ("laptop", "cli", "api"):
+        aa = run_agent(db, "auto_apply", run_auto_apply, trigger)
     r = run_agent(db, "reminders", send_reminders, trigger)
     extras = {"reminders": r.stats}
+    if get_settings().auto_apply_enabled and trigger in ("laptop", "cli", "api"):
+        extras["auto_apply"] = aa.stats
     if utcnow().minute < 15:  # hourly housekeeping
         extras["signals"] = run_agent(db, "signals", refresh_signals, trigger).stats
         extras["prune"] = run_agent(db, "prune", prune, trigger).stats

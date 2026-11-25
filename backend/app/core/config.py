@@ -84,6 +84,8 @@ class Settings(BaseSettings):
     candidate_expected_ctc: str | None = None
     candidate_willing_to_relocate: str | None = None  # yes | no
     candidate_needs_sponsorship_abroad: str = "yes"
+    candidate_degree: str = "Master's"
+    candidate_past_employers: CsvList = []  # e.g. "5Sec CyberPWN,Holla's Innovation,JSpiders"
 
     # Applications / outreach
     follow_up_days: int = 5
@@ -97,7 +99,7 @@ class Settings(BaseSettings):
 
     @field_validator("cors_origins", "current_employer_names", "current_employer_domains",
                      "adzuna_countries", "signal_feeds",
-                     "auto_apply_countries", mode="before")
+                     "auto_apply_countries", "candidate_past_employers", mode="before")
     @classmethod
     def _split_csv(cls, v):
         if isinstance(v, str):

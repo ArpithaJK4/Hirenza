@@ -33,6 +33,11 @@ with session_scope() as db: print(1 if db.scalar(select(User.id)) else 0)')" = "
   .venv/bin/python -m app.cli create-user "$EMAIL"
 fi
 
+if grep -qE '^AUTO_APPLY_ENABLED=true' "$ROOT/.env" && ! .venv/bin/python -c "import playwright" 2>/dev/null; then
+  echo "Installing browser automation for auto-apply (first time only)…"
+  .venv/bin/pip install -q -r requirements-autofill.txt && .venv/bin/playwright install chromium
+fi
+
 cd "$ROOT/frontend"
 [ -d node_modules ] || { echo "Installing dashboard (first run only)…"; npm install --silent; }
 
@@ -42,7 +47,12 @@ cleanup() { echo; echo "Stopping…"; kill "${pids[@]}" 2>/dev/null || true; }
 trap cleanup EXIT INT TERM
 .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --log-level warning & pids+=($!)
 .venv/bin/python -m app.cli scheduler --every "${HUNT_EVERY_MINUTES:-15}" & pids+=($!)
-(cd "$ROOT/frontend" && npm run dev -- --host 127.0.0.1 --port 5173 >/dev/null) & pids+=($!)
+(if grep -qE '^AUTO_APPLY_ENABLED=true' "$ROOT/.env" && ! .venv/bin/python -c "import playwright" 2>/dev/null; then
+  echo "Installing browser automation for auto-apply (first time only)…"
+  .venv/bin/pip install -q -r requirements-autofill.txt && .venv/bin/playwright install chromium
+fi
+
+cd "$ROOT/frontend" && npm run dev -- --host 127.0.0.1 --port 5173 >/dev/null) & pids+=($!)
 sleep 3
 echo ""
 echo "  Dashboard:  http://localhost:5173"

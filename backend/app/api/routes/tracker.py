@@ -153,3 +153,35 @@ def notifications(limit: int = 50, db: Session = Depends(get_db), _: User = Depe
     rows = db.scalars(select(Notification).order_by(Notification.id.desc()).limit(min(limit, 200)))
     return [{"id": n.id, "channel": n.channel, "kind": n.kind, "title": n.title, "status": n.status,
              "error": n.error, "created_at": n.created_at} for n in rows]
+
+
+@router.get("/auto-apply")
+def auto_apply_status(db: Session = Depends(get_db), profile: CandidateProfile = Depends(current_profile)):
+    from app.agents.application import auto_apply as aa
+    from app.core.config import get_settings
+    s = get_settings()
+    missing = [k for k in ("candidate_full_name", "candidate_email", "candidate_phone", "candidate_notice_period",
+                           "candidate_expected_ctc", "candidate_current_ctc", "candidate_willing_to_relocate")
+               if not getattr(s, k)]
+    return {"enabled": s.auto_apply_enabled, "dry_run": s.auto_apply_dry_run, "paused": aa.is_paused(db),
+            "min_score": s.auto_apply_min_score, "daily_cap": s.auto_apply_daily_cap,
+            "used_today": aa.used_today(db, profile.id), "countries": s.auto_apply_countries,
+            "missing_answers": missing}
+
+
+class PauseIn(BaseModel):
+    paused: bool
+
+
+@router.put("/auto-apply/pause")
+def auto_apply_pause(body: PauseIn, db: Session = Depends(get_db), _: User = Depends(admin_user)):
+    from app.agents.application import auto_apply as aa
+    aa.set_paused(db, body.paused)
+    return {"paused": body.paused}
+
+
+@router.post("/auto-apply/test-run")
+def auto_apply_test(db: Session = Depends(get_db), _: User = Depends(admin_user)):
+    """Always a dry run: fills forms and screenshots, never submits."""
+    from app.agents.application.auto_apply import run_auto_apply
+    return run_auto_apply(db, force_dry_run=True)

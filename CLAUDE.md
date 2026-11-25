@@ -9,8 +9,11 @@ Plan: docs/PLAN.md · Architecture: docs/ARCHITECTURE.md (read only the section 
    Use `app.guardrails.is_current_employer()` in every agent that touches companies/people
    (discovery, matching, application, outreach, referral). Employer list comes from env
    `CURRENT_EMPLOYER_NAMES` / `CURRENT_EMPLOYER_DOMAINS` — never hardcode it in the repo.
-3. **Human approval** before any application submit or message send. Never mark "submitted"
-   without a real confirmation. Never fabricate jobs, contacts, confirmations or outcomes.
+3. **Human approval** before any application submit or message send. The ONLY exception is auto-apply
+   (user-enabled `AUTO_APPLY_ENABLED` rule = standing approval) on PUBLIC company ATS forms
+   (Greenhouse/Lever/Ashby): never on login-based sites (LinkedIn/Naukri/Indeed), never past a CAPTCHA,
+   never guessing an answer (unknown required question → manual review), daily cap + pause switch, and
+   "submitted" only after a confirmation page. Never fabricate jobs, contacts, confirmations or outcomes.
 4. Only compliant sources: official APIs, public ATS feeds, RSS, the user's own email. No scraping
    behind auth, no CAPTCHA/rate-limit bypass.
 5. Secrets only via env (`SecretStr`). Repo may be public: no personal contact data in code/data files.

@@ -90,6 +90,8 @@ def main(argv=None):
     sb = sub.add_parser("submitted")
     sb.add_argument("app_id", type=int)
     sb.add_argument("ref")
+    aa = sub.add_parser("auto-apply")
+    aa.add_argument("--live", action="store_true", help="really submit (default: test mode)")
     for name in ("signals", "optimise", "prune"):
         sub.add_parser(name)
     sc = sub.add_parser("scheduler")
@@ -155,6 +157,9 @@ def main(argv=None):
             except (ApplicationBlocked, AttributeError) as e:
                 sys.exit(str(e) or "Application not found")
             print("Recorded. Follow-up reminder set.")
+        elif args.cmd == "auto-apply":
+            from app.agents.application.auto_apply import run_auto_apply
+            _print(run_auto_apply(db, force_dry_run=not args.live))
         elif args.cmd == "signals":
             from app.agents.outreach.service import refresh_signals
             _print(refresh_signals(db))
