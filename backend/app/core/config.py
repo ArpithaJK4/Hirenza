@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     jsearch_api_key: SecretStr | None = None
     gmail_imap_user: str | None = None
     gmail_imap_app_password: SecretStr | None = None
-    gmail_alert_lookback_days: int = 2
+    gmail_alert_lookback_days: int = 7
 
     # Notifications
     smtp_host: str | None = None
@@ -70,6 +70,21 @@ class Settings(BaseSettings):
     candidate_github_url: str | None = None
     candidate_location: str = "Bengaluru, India"
 
+    # Auto-apply (public company ATS forms only: Greenhouse / Lever / Ashby). Off by default.
+    auto_apply_enabled: bool = False
+    auto_apply_dry_run: bool = True  # fill + screenshot, never click submit
+    auto_apply_min_score: float = 80
+    auto_apply_daily_cap: int = 10
+    auto_apply_countries: CsvList = ["India", "Worldwide"]
+    auto_apply_headless: bool = True
+    candidate_current_company: str | None = None
+    candidate_years_experience: str = "2"
+    candidate_notice_period: str | None = None
+    candidate_current_ctc: str | None = None
+    candidate_expected_ctc: str | None = None
+    candidate_willing_to_relocate: str | None = None  # yes | no
+    candidate_needs_sponsorship_abroad: str = "yes"
+
     # Applications / outreach
     follow_up_days: int = 5
     max_upload_mb: int = 2
@@ -81,7 +96,8 @@ class Settings(BaseSettings):
     ]
 
     @field_validator("cors_origins", "current_employer_names", "current_employer_domains",
-                     "adzuna_countries", "signal_feeds", mode="before")
+                     "adzuna_countries", "signal_feeds",
+                     "auto_apply_countries", mode="before")
     @classmethod
     def _split_csv(cls, v):
         if isinstance(v, str):

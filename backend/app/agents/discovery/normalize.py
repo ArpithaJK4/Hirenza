@@ -115,7 +115,7 @@ def extract_experience(text: str | None) -> tuple[float | None, float | None]:
 
 _LPA = re.compile(
     r"(?:₹|inr|rs\.?)?\s*(\d{1,3}(?:\.\d+)?)\s*(?:-|–|to)\s*(\d{1,3}(?:\.\d+)?)\s*"
-    r"(?:lpa|lakhs?(?:\s*per\s*annum)?|l\.p\.a)", re.I)
+    r"(?:lpa|lakhs?(?:\s*per\s*annum)?|lacs?(?:\s*p\.?a\.?)?|l\.p\.a)", re.I)
 
 
 def extract_salary_inr_lpa(text: str | None) -> tuple[float | None, float | None]:

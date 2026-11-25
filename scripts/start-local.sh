@@ -14,7 +14,8 @@ if [ ! -f .env ]; then
   rm -f .env.bak
   echo ">> Edit .env to add CURRENT_EMPLOYER_NAMES (important) and optional Gmail/LLM settings."
 fi
-set -a; source .env; set +a
+# The app reads .env itself (pydantic); don't `source` it — values may contain spaces.
+HUNT_EVERY_MINUTES=$(grep -E '^HUNT_EVERY_MINUTES=' .env | cut -d= -f2 | tr -d '"' || true)
 
 cd backend
 if [ ! -x .venv/bin/python ]; then

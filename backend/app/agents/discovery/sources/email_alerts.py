@@ -24,11 +24,26 @@ PROVIDERS = {
     },
     "naukri": {
         "senders": ["naukrialerts@naukri.com", "info@naukri.com", "jobalerts@naukri.com"],
-        "link": re.compile(r"naukri\.com/job-listings-[\w-]*?-(\d{9,})"),
+        "link": re.compile(r"naukri\.com/(?:jd/)?job-listings-[\w-]*?-(\d{9,})"),
         "canonical": None,
     },
 }
 _SKIP_TEXT = re.compile(r"^(view|apply|see|easy apply|save|unsubscribe|more)\b", re.I)
+
+
+_RATING = re.compile(r"^\d(\.\d)?$")
+_SALARY = re.compile(r"(lac|lakh|lpa|₹|inr|not disclosed)", re.I)
+
+
+def _card_fields(lines: list[str]) -> tuple[str, str, str, str]:
+    """Naukri-style card: title, company, [rating], location, salary, Apply."""
+    lines = [ln for ln in lines if ln and not _SKIP_TEXT.match(ln) and not _RATING.match(ln)]
+    title = lines[0] if lines else ""
+    company = lines[1] if len(lines) > 1 else "Unknown"
+    rest = lines[2:]
+    salary = next((ln for ln in rest if _SALARY.search(ln)), "")
+    location = next((ln for ln in rest if ln != salary), "")
+    return title, company, location, salary
 
 
 def parse_alert_html(html: str, provider: str) -> list[RawJob]:
@@ -40,26 +55,35 @@ def parse_alert_html(html: str, provider: str) -> list[RawJob]:
         if not m:
             continue
         job_id = m.group(1)
-        title = a.get_text(" ", strip=True)
-        if not title or _SKIP_TEXT.match(title) or len(title) > 150:
-            continue
-        if job_id in seen:
-            continue
-        # Company / location usually follow the title inside the same card.
-        card = a.find_parent(["td", "div", "table"]) or a.parent
-        lines = [ln.strip(" ·•|") for ln in card.get_text("\n", strip=True).split("\n")]
-        lines = [ln for ln in lines if ln and ln != title and not _SKIP_TEXT.match(ln)]
-        company, location = "Unknown", ""
-        if lines:
-            first = lines[0]
-            if "·" in first:
-                company, _, location = (p.strip() for p in first.partition("·"))
-            else:
-                company = first
-                location = lines[1] if len(lines) > 1 else ""
+        anchor_lines = [ln.strip(" ·•|") for ln in a.get_text("\n", strip=True).split("\n") if ln.strip(" ·•|")]
         url = cfg["canonical"].format(id=job_id) if cfg["canonical"] else a["href"].split("?")[0]
-        seen[job_id] = RawJob(external_id=f"{provider}:{job_id}", title=title, company_name=company[:200],
-                              url=url, location=location[:300], raw={"via": f"{provider} alert email"})
+        salary = ""
+        if len(anchor_lines) >= 3:  # whole card is the link (Naukri) -> best source of fields
+            title, company, location, salary = _card_fields(anchor_lines)
+        else:
+            title = " ".join(anchor_lines)
+            if not title or _SKIP_TEXT.match(title) or len(title) > 150 or job_id in seen:
+                continue
+            card = a.find_parent(["td", "div", "table"]) or a.parent
+            lines = [ln.strip(" ·•|") for ln in card.get_text("\n", strip=True).split("\n")]
+            lines = [ln for ln in lines if ln and ln != title and not _SKIP_TEXT.match(ln) and not _RATING.match(ln)]
+            company, location = "Unknown", ""
+            if lines:
+                first = lines[0]
+                if "·" in first:
+                    company, _, location = (p.strip() for p in first.partition("·"))
+                else:
+                    company = first
+                    location = lines[1] if len(lines) > 1 else ""
+        if not title:
+            continue
+        prev = seen.get(job_id)
+        if prev and prev.company_name != "Unknown" and len(anchor_lines) < 3:
+            continue
+        seen[job_id] = RawJob(external_id=f"{provider}:{job_id}", title=title[:300], company_name=company[:200],
+                              url=url, location=location[:300],
+                              description=f"Salary: {salary}" if salary and "not disclosed" not in salary.lower()
+                              else "", raw={"via": f"{provider} alert email"})
     return list(seen.values())
 
 

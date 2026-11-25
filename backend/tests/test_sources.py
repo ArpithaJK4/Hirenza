@@ -89,3 +89,16 @@ def test_linkedin_alert_email_parse():
     assert jobs[0].company_name == "Zeta" and "Bengaluru" in jobs[0].location
     assert jobs[0].url == "https://www.linkedin.com/jobs/view/4012345678/"
     assert (jobs[1].company_name, jobs[1].location) == ("Acme", "Pune")
+
+
+def test_naukri_card_email_parse():
+    html = """<a href="https://www.naukri.com/jd/job-listings-aws-devops-engineer-infosys-hyderabad-121125012345?src=x">
+      <div>Aws Devops Engineer</div><div>Infosys</div><div>3.5</div>
+      <div>Hybrid - Hyderabad, Bengaluru</div><div>8-15 Lacs PA</div><div>Apply</div></a>
+      <a href="https://www.naukri.com/jd/job-listings-aws-devops-engineer-infosys-hyderabad-121125012345">
+      Aws Devops Engineer</a>"""
+    [j] = parse_alert_html(html, "naukri")
+    assert (j.title, j.company_name, j.location) == ("Aws Devops Engineer", "Infosys", "Hybrid - Hyderabad, Bengaluru")
+    assert j.description == "Salary: 8-15 Lacs PA"
+    from app.agents.discovery.normalize import extract_salary_inr_lpa
+    assert extract_salary_inr_lpa(j.description) == (8, 15)
