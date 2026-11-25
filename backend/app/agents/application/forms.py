@@ -89,7 +89,8 @@ def answers_for(job, cover_letter: str, profile_skills: list[str] | None = None)
 def answer(label: str, rules) -> str | None:
     for pattern, value in rules:
         if pattern.search(label or ""):
-            return value(label) if callable(value) else value
+            out = value(label) if callable(value) else value
+            return out or None  # empty setting = unknown -> manual review
     return None
 
 

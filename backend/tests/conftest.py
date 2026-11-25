@@ -13,7 +13,9 @@ import pytest  # noqa: E402
 from sqlalchemy import create_engine  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
-from app.core.config import get_settings  # noqa: E402
+from app.core.config import Settings, get_settings  # noqa: E402
+
+Settings.model_config["env_file"] = None  # tests must never read the developer's real .env
 from app.core.db import Base, SessionLocal, reset_engine  # noqa: E402
 
 
