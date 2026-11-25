@@ -1,0 +1,3 @@
+# Optional: local browser autofill (run on your laptop only)
+-r requirements.txt
+playwright>=1.48

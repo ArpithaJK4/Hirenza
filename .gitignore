@@ -1,0 +1,16 @@
+.env
+*.env.local
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.db
+*.sqlite3
+node_modules/
+dist/
+.DS_Store
+backups/
+*.db-wal
+*.db-shm
+*.tsbuildinfo

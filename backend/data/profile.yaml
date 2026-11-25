@@ -1,0 +1,57 @@
+# Default candidate profile (seeded on create-user; edit later via API /api/profile).
+# No personal contact details here: this repo may be public.
+headline: DevOps / Platform Engineer · Python Backend
+years_experience: 2.0
+skills:
+  - Python
+  - Django
+  - Django REST Framework
+  - FastAPI
+  - Flask
+  - PostgreSQL
+  - MySQL
+  - REST APIs
+  - Docker
+  - Kubernetes
+  - Helm
+  - AWS
+  - EKS
+  - EC2
+  - S3
+  - IAM
+  - VPC
+  - Terraform
+  - GitHub Actions
+  - Jenkins
+  - CI/CD
+  - Git
+  - DevSecOps
+  - SonarQube
+  - Trivy
+  - Snyk
+  - OWASP Dependency-Check
+  - Prometheus
+  - Grafana
+  - SigNoz
+  - Linux
+  - Nginx
+  - Java
+  - Spring Boot
+  - React
+target_roles:
+  - Python Developer
+  - Backend Developer
+  - DevOps Engineer
+  - Associate DevOps Engineer
+  - Cloud Engineer
+  - Platform Engineer
+  - DevSecOps Engineer
+  - Site Reliability Engineer
+  - Cloud Security Engineer
+  - Infrastructure Engineer
+priority_cities: [Bengaluru, Hyderabad, Pune, Chennai, Mumbai, Delhi NCR]
+target_countries: [India, USA, UK, Germany, Netherlands, Singapore, UAE, Canada, Worldwide]
+salary_min_lpa: 8
+salary_max_lpa: 15
+match_threshold: 55
+alert_threshold: 72

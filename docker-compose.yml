@@ -1,0 +1,54 @@
+# Local full stack (laptop). For the zero-cost cloud schedule see .github/workflows/hunt.yml.
+# Containers use COMPOSE_DATABASE_URL (default: the local postgres service below). Set it to your Neon
+# URL to share data with the GitHub Actions hunter. DATABASE_URL in .env stays for host-side CLI use.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: hirenza
+      POSTGRES_PASSWORD: hirenza
+      POSTGRES_DB: hirenza
+    volumes: [pgdata:/var/lib/postgresql/data]
+    ports: ["127.0.0.1:5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hirenza"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:6379:6379"]
+
+  api:
+    build: ./backend
+    env_file: .env
+    environment:
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgresql+psycopg://hirenza:hirenza@postgres:5432/hirenza}
+      REDIS_URL: redis://redis:6379/0
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  # Optional: only if you want the laptop itself to run the 15-min schedule
+  worker:
+    build: ./backend
+    profiles: [scheduler]
+    command: celery -A app.workers.celery_app worker --loglevel=INFO --concurrency=2
+    env_file: .env
+    environment:
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgresql+psycopg://hirenza:hirenza@postgres:5432/hirenza}
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [api, redis]
+
+  beat:
+    build: ./backend
+    profiles: [scheduler]
+    command: celery -A app.workers.celery_app beat --loglevel=INFO
+    env_file: .env
+    environment:
+      DATABASE_URL: ${COMPOSE_DATABASE_URL:-postgresql+psycopg://hirenza:hirenza@postgres:5432/hirenza}
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [redis]
+
+volumes:
+  pgdata:

@@ -1,0 +1,81 @@
+# Company job boards polled via public ATS APIs. All tokens verified live on 2026-11-17.
+# Add more: find the board URL (boards.greenhouse.io/<token>, jobs.lever.co/<token>,
+# jobs.ashbyhq.com/<token>) and add an entry. Wrong tokens are auto-disabled on 404.
+# Your current employer is excluded automatically via CURRENT_EMPLOYER_NAMES.
+
+greenhouse:
+  - {name: "Stripe", token: stripe, country: Global}
+  - {name: "Airbnb", token: airbnb, country: Global}
+  - {name: "Gitlab", token: gitlab, country: Global}
+  - {name: "Cloudflare", token: cloudflare, country: Global}
+  - {name: "Datadog", token: datadog, country: Global}
+  - {name: "MongoDB", token: mongodb, country: Global}
+  - {name: "Elastic", token: elastic, country: Global}
+  - {name: "Databricks", token: databricks, country: Global}
+  - {name: "Discord", token: discord, country: Global}
+  - {name: "Figma", token: figma, country: Global}
+  - {name: "Twilio", token: twilio, country: Global}
+  - {name: "Okta", token: okta, country: Global}
+  - {name: "Dropbox", token: dropbox, country: Global}
+  - {name: "Robinhood", token: robinhood, country: Global}
+  - {name: "Groww", token: groww, country: India}
+  - {name: "Druva", token: druva, country: India}
+  - {name: "Rubrik", token: rubrik, country: Global}
+  - {name: "HackerRank", token: hackerrank, country: India}
+  - {name: "Grafana Labs", token: grafanalabs, country: Global}
+  - {name: "Vercel", token: vercel, country: Global}
+  - {name: "PagerDuty", token: pagerduty, country: Global}
+  - {name: "New Relic", token: newrelic, country: Global}
+  - {name: "Fivetran", token: fivetran, country: Global}
+  - {name: "PlanetScale", token: planetscale, country: Global}
+  - {name: "Cockroach Labs", token: cockroachlabs, country: Global}
+  - {name: "Sumo Logic", token: sumologic, country: Global}
+  - {name: "Tailscale", token: tailscale, country: Global}
+  - {name: "Coinbase", token: coinbase, country: Global}
+  - {name: "CircleCI", token: circleci, country: Global}
+  - {name: "Airtable", token: airtable, country: Global}
+  - {name: "Deliveroo", token: deliveroo, country: Global}
+  - {name: "Monzo", token: monzo, country: Global}
+  - {name: "N26", token: n26, country: Global}
+  - {name: "Adyen", token: adyen, country: Global}
+  - {name: "Gusto", token: gusto, country: Global}
+  - {name: "Lyft", token: lyft, country: Global}
+  - {name: "Samsara", token: samsara, country: Global}
+  - {name: "Zscaler", token: zscaler, country: Global}
+  - {name: "Netlify", token: netlify, country: Global}
+  - {name: "Algolia", token: algolia, country: Global}
+  - {name: "Contentful", token: contentful, country: Global}
+  - {name: "Mattermost", token: mattermost, country: Global}
+  - {name: "YugabyteDB", token: yugabyte, country: Global}
+
+lever:
+  - {name: "Palantir", token: palantir, country: Global}
+  - {name: "Spotify", token: spotify, country: Global}
+  - {name: "CRED", token: cred, country: India}
+  - {name: "Meesho", token: meesho, country: India}
+  - {name: "Paytm", token: paytm, country: India}
+  - {name: "Zeta", token: zeta, country: India}
+  - {name: "Mindtickle", token: mindtickle, country: India}
+  - {name: "Binance", token: binance, country: Global}
+  - {name: "Outreach", token: outreach, country: Global}
+
+ashby:
+  - {name: "Notion", token: notion, country: Global}
+  - {name: "Ramp", token: ramp, country: Global}
+  - {name: "Linear", token: linear, country: Global}
+  - {name: "Supabase", token: supabase, country: Global}
+  - {name: "PostHog", token: posthog, country: Global}
+  - {name: "OpenAI", token: openai, country: Global}
+  - {name: "Atlan", token: atlan, country: India}
+  - {name: "Replit", token: replit, country: Global}
+  - {name: "Sardine", token: sardine, country: Global}
+  - {name: "Cohere", token: cohere, country: Global}
+  - {name: "Modal", token: modal, country: Global}
+  - {name: "Render", token: render, country: Global}
+  - {name: "Railway", token: railway, country: Global}
+  - {name: "Temporal", token: temporal, country: Global}
+  - {name: "ClickHouse", token: clickhouse, country: Global}
+  - {name: "Airbyte", token: airbyte, country: Global}
+  - {name: "Snyk", token: snyk, country: Global}
+  - {name: "Docker", token: docker, country: Global}
+  - {name: "Plane", token: plane, country: India}

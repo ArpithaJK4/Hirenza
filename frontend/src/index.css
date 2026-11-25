@@ -1,0 +1,9 @@
+@import "tailwindcss";
+.card { @apply bg-white rounded-xl border border-slate-200 p-4; }
+.btn { @apply inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-medium border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-50; }
+.btn-primary { @apply bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700; }
+.btn-danger { @apply text-red-700 border-red-300 hover:bg-red-50; }
+.input { @apply rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm bg-white; }
+.chip { @apply inline-block rounded-full px-2 py-0.5 text-xs bg-slate-100 text-slate-700; }
+th { @apply text-left font-medium text-slate-500 text-xs uppercase tracking-wide px-2 py-2; }
+td { @apply px-2 py-2 align-top text-sm; }
